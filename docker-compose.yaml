@@ -25,7 +25,7 @@ services:
       db:
         condition: service_healthy
     expose:
-      - "8000"
+      - "8000:8000"
 
   frontend:
     build:
@@ -34,7 +34,7 @@ services:
     depends_on:
       - backend
     expose:
-      - "3000"
+      - "3000:3000"
 
 volumes:
   postgres_data:
