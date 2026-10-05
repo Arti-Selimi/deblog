@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid()) @db.uuid
+  id       String @id @default(uuid())
   email    String @unique
   password String
 
@@ -22,15 +22,15 @@ model User {
 }
 
 model Profile {
-  id     String @id @default(uuid()) @db.uuid
-  userId String @unique @db.uuid
+  id     String @id @default(uuid())
+  userId String @unique
 
   user User @relation(fields: [userId], references: [id])
 }
 
 model Blog {
-  id     String @id @default(uuid()) @db.uuid
-  userId String @db.uuid
+  id     String @id @default(uuid())
+  userId String
   title  String
 
   user    User      @relation(fields: [userId], references: [id])
@@ -43,37 +43,38 @@ model Blog {
 }
 
 model BlogBody {
-  id      String @id @default(uuid()) @db.uuid
-  blogId  String @unique @db.uuid
+  id      String @id @default(uuid())
+  blogId  String @unique
   content String
 
-  blog    Blog     @relation(fields: [blogId], references: [id])
-  margins Margin[]
+  blog      Blog       @relation(fields: [blogId], references: [id])
+  margins   Margin[]
+  citations Citation[]
 }
 
 model Margin {
-  id         String @id @default(uuid()) @db.uuid
-  blogId     String @db.uuid
-  userId     String @db.uuid
-  blogBodyId String @db.uuid
-  citationId String? @db.uuid
+  id         String  @id @default(uuid())
+  blogId     String
+  userId     String
+  blogBodyId String
+  citationId String?
 
   title   String?
   content String
 
-  blog     Blog     @relation(fields: [blogId], references: [id])
-  user     User     @relation(fields: [userId], references: [id])
-  blogBody BlogBody @relation(fields: [blogBodyId], references: [id])
-  citation Citation?
+  blog     Blog      @relation(fields: [blogId], references: [id])
+  user     User      @relation(fields: [userId], references: [id])
+  blogBody BlogBody  @relation(fields: [blogBodyId], references: [id])
+  citation Citation? @relation(fields: [citationId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Review {
-  id      String @id @default(uuid()) @db.uuid
-  blogId  String @db.uuid
-  userId  String @db.uuid
+  id      String @id @default(uuid())
+  blogId  String
+  userId  String
   content String
 
   blog Blog @relation(fields: [blogId], references: [id])
@@ -84,13 +85,12 @@ model Review {
 }
 
 model Citation {
-    id String @id @default(uuid()) @db.uuid
-    blogBodyId String @db.uuid
-    text String
+  id         String @id @default(uuid())
+  blogBodyId String
+  text       String
 
-    blogBody BlogBody @relation(fields: [blogBodyId], references: [id])
-    margins Margin[]
+  blogBody BlogBody @relation(fields: [blogBodyId], references: [id])
+  margins  Margin[]
 
-    createdAt DateTime @default(now())
+  createdAt DateTime @default(now())
 }
-
