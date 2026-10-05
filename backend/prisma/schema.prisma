@@ -6,3 +6,77 @@ generator client {
 datasource db {
   provider = "postgresql"
 }
+
+model User {
+  id String @id @default(uuid())
+  email String @unique
+  password String
+
+  profiles Profile[]
+  blogs Blog[]
+  margins Margin[]
+  reviews Review[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Profile {
+  id     String  @id @default(uuid())
+  userId String  @unique
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Blog {
+  id      String    @id @default(uuid())
+  userId    String
+  title     String
+
+  user      User      @relation(fields: [userId], references: [id])
+  body      BlogBody?
+  margins   Margin[]
+  reviews   Review[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model BlogBody {
+  id      String    @id @default(uuid())
+  blogId  String    @unique
+  content String
+
+  blog    Blog   @relation(fields: [blogId], references: [id])
+  margins Margin[]
+}
+
+model Margin {
+  id          String    @id @default(uuid())
+  blogId      String
+  userId      String
+  blogBodyId  String
+
+  title       String?
+  content     String
+
+  blog        Blog     @relation(fields: [blogId], references: [id])
+  user        User     @relation(fields: [userId], references: [id])
+  blogBody    BlogBody @relation(fields: [blogBodyId], references: [id])
+
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+}
+
+model Review {
+  id        String      @id @default(uuid())
+  blogId    String
+  userId    String
+  content   String
+
+  blog      Blog     @relation(fields: [blogId], references: [id])
+  user      User     @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
