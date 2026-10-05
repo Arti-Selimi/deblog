@@ -1,6 +1,6 @@
 generator client {
   provider = "prisma-client"
-  output = "../src/generated"
+  output   = "../src/generated"
 }
 
 datasource db {
@@ -8,12 +8,33 @@ datasource db {
 }
 
 model User {
-  id String @id @default(uuid())
-  email String @unique
+  id       String @id @default(uuid())
+  email    String @unique
   password String
 
   profiles Profile[]
-  blogs Blog[]
+  blogs    Blog[]
+  margins  Margin[]
+  reviews  Review[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model Profile {
+  id     String @id @default(uuid())
+  userId String @unique
+
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Blog {
+  id     String @id @default(uuid())
+  userId String
+  title  String
+
+  user    User      @relation(fields: [userId], references: [id])
+  body    BlogBody?
   margins Margin[]
   reviews Review[]
 
@@ -21,61 +42,40 @@ model User {
   updatedAt DateTime @updatedAt
 }
 
-model Profile {
-  id     String  @id @default(uuid())
-  userId String  @unique
+model BlogBody {
+  id      String @id @default(uuid())
+  blogId  String @unique
+  content String
 
-  user User @relation(fields: [userId], references: [id])
+  blog    Blog     @relation(fields: [blogId], references: [id])
+  margins Margin[]
 }
 
-model Blog {
-  id      String    @id @default(uuid())
-  userId    String
-  title     String
+model Margin {
+  id         String @id @default(uuid())
+  blogId     String
+  userId     String
+  blogBodyId String
 
-  user      User      @relation(fields: [userId], references: [id])
-  body      BlogBody?
-  margins   Margin[]
-  reviews   Review[]
+  title   String?
+  content String
+
+  blog     Blog     @relation(fields: [blogId], references: [id])
+  user     User     @relation(fields: [userId], references: [id])
+  blogBody BlogBody @relation(fields: [blogBodyId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
-model BlogBody {
-  id      String    @id @default(uuid())
-  blogId  String    @unique
+model Review {
+  id      String @id @default(uuid())
+  blogId  String
+  userId  String
   content String
 
-  blog    Blog   @relation(fields: [blogId], references: [id])
-  margins Margin[]
-}
-
-model Margin {
-  id          String    @id @default(uuid())
-  blogId      String
-  userId      String
-  blogBodyId  String
-
-  title       String?
-  content     String
-
-  blog        Blog     @relation(fields: [blogId], references: [id])
-  user        User     @relation(fields: [userId], references: [id])
-  blogBody    BlogBody @relation(fields: [blogBodyId], references: [id])
-
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @updatedAt
-}
-
-model Review {
-  id        String      @id @default(uuid())
-  blogId    String
-  userId    String
-  content   String
-
-  blog      Blog     @relation(fields: [blogId], references: [id])
-  user      User     @relation(fields: [userId], references: [id])
+  blog Blog @relation(fields: [blogId], references: [id])
+  user User @relation(fields: [userId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
