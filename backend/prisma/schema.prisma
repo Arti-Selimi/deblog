@@ -8,7 +8,7 @@ datasource db {
 }
 
 model User {
-  id       String @id @default(uuid())
+  id       String @id @default(uuid()) @db.uuid
   email    String @unique
   password String
 
@@ -22,15 +22,15 @@ model User {
 }
 
 model Profile {
-  id     String @id @default(uuid())
-  userId String @unique
+  id     String @id @default(uuid()) @db.uuid
+  userId String @unique @db.uuid
 
   user User @relation(fields: [userId], references: [id])
 }
 
 model Blog {
-  id     String @id @default(uuid())
-  userId String
+  id     String @id @default(uuid()) @db.uuid
+  userId String @db.uuid
   title  String
 
   user    User      @relation(fields: [userId], references: [id])
@@ -43,8 +43,8 @@ model Blog {
 }
 
 model BlogBody {
-  id      String @id @default(uuid())
-  blogId  String @unique
+  id      String @id @default(uuid()) @db.uuid
+  blogId  String @unique @db.uuid
   content String
 
   blog    Blog     @relation(fields: [blogId], references: [id])
@@ -52,10 +52,11 @@ model BlogBody {
 }
 
 model Margin {
-  id         String @id @default(uuid())
-  blogId     String
-  userId     String
-  blogBodyId String
+  id         String @id @default(uuid()) @db.uuid
+  blogId     String @db.uuid
+  userId     String @db.uuid
+  blogBodyId String @db.uuid
+  citationId String? @db.uuid
 
   title   String?
   content String
@@ -63,15 +64,16 @@ model Margin {
   blog     Blog     @relation(fields: [blogId], references: [id])
   user     User     @relation(fields: [userId], references: [id])
   blogBody BlogBody @relation(fields: [blogBodyId], references: [id])
+  citation Citation?
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 model Review {
-  id      String @id @default(uuid())
-  blogId  String
-  userId  String
+  id      String @id @default(uuid()) @db.uuid
+  blogId  String @db.uuid
+  userId  String @db.uuid
   content String
 
   blog Blog @relation(fields: [blogId], references: [id])
@@ -80,3 +82,15 @@ model Review {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+model Citation {
+    id String @id @default(uuid()) @db.uuid
+    blogBodyId String @db.uuid
+    text String
+
+    blogBody BlogBody @relation(fields: [blogBodyId], references: [id])
+    margins Margin[]
+
+    createdAt DateTime @default(now())
+}
+
