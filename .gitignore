@@ -11,6 +11,9 @@ docker-compose.dev.yaml
 .next/
 out/
 
+# prisma
+backend/src/generated
+
 # Logs
 *.log
 

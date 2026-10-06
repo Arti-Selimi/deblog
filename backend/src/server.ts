@@ -1,21 +1,23 @@
-import Fastify, { type FastifyInstance } from "fastify"
+import Fastify from "fastify"
 import routes from "./modules/health/health.routes.ts"
+import registerGraphql from "./plugins/graphql.ts"
 
-export const fastify = Fastify({
+export const app = Fastify({
   logger: true
 })
 
-fastify.get('/', async function (request, reply) {
+app.get('/', async function (request, reply) {
   reply.send({hello: "world"})
 })
 
-fastify.register(routes)
+app.register(routes)
 
 async function start() {
   try {
-    fastify.listen({port: 8000})
+    await registerGraphql(app)
+    app.listen({port: 8000})
   } catch (err) {
-    fastify.log.error(err)
+    app.log.error(err)
     process.exit(1)
   }
 }

@@ -1,7 +1,7 @@
-import {fastify} from "../../server.ts"
-import {healthSchema} from "./health.schema.ts"
+import type {FastifyInstance} from "fastify"
+import { healthSchema } from "./health.schema.ts"
 
-fastify.route(
+export default async function healthRoutes(app: FastifyInstance) { return app.route(
   {
     method: "GET",
     url: "/health",
@@ -11,4 +11,4 @@ fastify.route(
     }
   }
 )
-
+}
